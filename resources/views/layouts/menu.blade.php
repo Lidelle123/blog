@@ -13,6 +13,8 @@
             <div>
                 <p class="text-base font-medium text-white">{{ Auth::user()->name }}</p>
                 <p class="text-sm text-teal-200">{{ Auth::user()->email }}</p>
+                <p class="text-xs" style="color: green">online</p>
+
             </div>
         </div>
         <div>
@@ -59,7 +61,7 @@
 </nav>
 <div class="flex flex-col items-center py-12">
     <a class="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl" href="#">
-        Dzikang Vanella Lidelle Blog
+        DVL Blog
     </a>
     <p class="text-lg text-gray-600">
         computer science student

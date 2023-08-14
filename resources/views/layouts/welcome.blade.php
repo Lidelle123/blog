@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+
     @vite('resources/css/app.css')
 
 </head>
@@ -17,7 +18,6 @@
             @include('layouts.menu')
         </header>
 
-        <!-- Topic Nav -->
         <nav class="w-full py-4 border-t border-b bg-gray-100" x-data="{ open: false }">
             <div class="block sm:hidden">
                 <a href="#"
@@ -60,11 +60,23 @@
                             By <a href="#" class="font-semibold hover:text-gray-800">{{ $annonce->user->name }} on
                                 {{ $annonce->created_at }}</a>
                         </p>
-                        <div style="justify-content: space-evenly">
-                            <button class="text-blue-700 hover:underline mb-2 focus:outline-none toggle-comments">
-                                show comments
+                        <div style="display: flex; justify-content:space-between">
+                            <button
+                                class="px-5 py-2 bg-indigo-500 hover:bg-indigo-700 text-white cursor-pointer rounded-md">
+                                Show comments
                             </button>
+
                             @include('layouts.commentModal')
+                            <form id="modify" action="{{ route('editAnnonce', ['id' => $annonce->id]) }}"
+                                method="GET" enctype="multipart/form-data">
+                                @csrf
+                                <button
+                                    class="px-5 py-2 bg-teal-500 hover:bg-teal-700 text-white cursor-pointer rounded-md"
+                                    type="submit">
+                                    Modify
+                                </button>
+                            </form>
+                            @include('layouts.deleteModal')
                             <div class="comments hidden">
                                 @foreach ($annonce->comments as $comment)
                                     <div class="mb-2">
@@ -74,6 +86,7 @@
                             </div>
 
                         </div>
+
                     </div>
                 </div>
             @elseif (!Auth::check())
@@ -98,8 +111,9 @@
                                 {{ $annonce->created_at }}</a>
                         </p>
                         <div style="justify-content: space-evenly">
-                            <button class="text-blue-700 hover:underline mb-2 focus:outline-none toggle-comments">
-                                show comments
+                            <button
+                                class="px-5 py-2 bg-indigo-500 hover:bg-indigo-700 text-white cursor-pointer rounded-md">
+                                Show comments
                             </button>
                             <div class="comments hidden">
                                 @foreach ($annonce->comments as $comment)
@@ -140,7 +154,7 @@
                 text: '{{ session('success') }}',
                 backgroundColor: 'green',
                 close: true,
-                duration: 30000, // 30 seconds
+                duration: 3000, // 3 seconds
             }).showToast();
         @endif
 
@@ -156,23 +170,11 @@
                 backgroundColor: 'red',
                 close: true,
                 duration: 30000, // 30 seconds
-                gravity: 'top', // You can customize the position
+                gravity: 'top',
             }).showToast();
         @endif
-
-        const addCommentButton = document.querySelector('.add-comment-button');
-    const commentModal = document.querySelector('#commentModal');
-
-    addCommentButton.addEventListener('click', () => {
-        commentModal.classList.remove('hidden');
-    });
-
-    // Ajoutez également le code pour fermer le modal si besoin
-    const closeModalButton = commentModal.querySelector('[data-modal-hide="authentication-modal"]');
-    closeModalButton.addEventListener('click', () => {
-        commentModal.classList.add('hidden');
-    });
-    </sc>
+    </script>
+    <script src="{{ asset('assets/js/myScript.js') }}"></script>
 
 </body>
 

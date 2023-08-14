@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\auth\AuthController;
+use App\Http\Controllers\authenticate\CommentController;
 use App\Http\Controllers\guest\AnnonceController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +30,8 @@ Route::name('auth.')->group(function () {
     Route::post('/login', [AuthController::class, "login"])->name('login');
     Route::get('/logout', [AuthController::class, "logout"])->name('logout');
 });
+
+Route::post('/addComment', [CommentController::class, 'add'])->name('addComment');
+Route::get('/annonce/{id}/edit', [AnnonceController::class, 'modifyForm'])->name('editAnnonce');
+Route::match(['post', 'put'], 'annonce/{id}/update', [AnnonceController::class, 'update'])->name('updateAnnonce');
+Route::match(['post', 'put'], 'annonce/{id}/delete', [AnnonceController::class, 'delete'])->name('deleteAnnonce');

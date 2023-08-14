@@ -30,7 +30,7 @@ class AnnonceController extends Controller
 
     public function store(Request $request)
     {
-        // Valider les données du formulaire
+
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
@@ -53,10 +53,64 @@ class AnnonceController extends Controller
 
             $annonce->save();
 
-            return redirect()->route('showAnnonce')->with('success', 'Annonce créée avec succès.');
+            return redirect()->route('showAnnonce')->with('success', 'Annonce created successfully.');
         } catch (\Exception $e) {
 
-            return back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de l\'annonce.']);
+            return back()->withInput()->withErrors(['error' => 'An error occurred while creating the annonce.']);
+        }
+    }
+
+    public function modifyForm($id)
+    {
+        $annonce = Annonce::findOrFail($id);
+        return view('layouts.modifyForm', compact('annonce'));
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Trouver l'annonce à mettre à jour
+        $annonce = Annonce::findOrFail($id);
+
+        // Mettre à jour les attributs de l'annonce
+        $annonce->title = $validatedData['title'];
+        $annonce->description = $validatedData['description'];
+        $annonce->user_id = Auth::user()->id;
+        $annonce->category_id = $validatedData['category_id'];
+
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('annonce_images', 'public');
+            $annonce->image = $imagePath;
+        }
+
+
+        $annonce->save();
+
+
+        return redirect()->route('showAnnonce', ['id' => $id])->with('success', 'Annonce updated successfully');
+    }
+
+    public function delete(Request $request, $id)
+    {
+        try {
+            $annonce = Annonce::findOrFail($id);
+            // on s'assure que l'utilisateur actuel peut supprimer cette annonce s'il le souhaite
+            if (auth()->user()->id === $annonce->user_id) {
+                $annonce->delete();
+                return redirect()->back()->with('success', 'Annonce deleted successfully.');
+            } else {
+                return redirect()->back()->with('error', 'You do not have permission to delete this annonce.');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while deleting the annonce.');
         }
     }
 }
